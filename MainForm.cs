@@ -20,8 +20,11 @@ public class MainForm : Form
     private readonly Label manualLabel;
     private readonly Button enterNumberButton;
     private readonly Button connectButton;
+    private readonly Button adminButton;
     private readonly Label statusLabel;
-    private const string EspStartupKey = "123456789";
+    private string espStartupKey = "123456789";
+    private const string AdminUserId = "arhum";
+    private const string AdminPassword = "1906";
     private string? detectedPortName;
     private readonly Label resultLabel;
     private readonly Label rawInputLabel;
@@ -62,6 +65,9 @@ public class MainForm : Form
 
         connectButton = new Button { Text = "Auto Connect", Location = new Point(40, 420), Width = 160 };
         connectButton.Click += ConnectButton_Click;
+
+        adminButton = new Button { Text = "Admin", Location = new Point(220, 420), Width = 120 };
+        adminButton.Click += AdminButton_Click;
 
         statusLabel = new Label
         {
@@ -109,6 +115,7 @@ public class MainForm : Form
         Controls.Add(manualInput);
         Controls.Add(enterNumberButton);
         Controls.Add(connectButton);
+        Controls.Add(adminButton);
         Controls.Add(statusLabel);
         Controls.Add(resultLabel);
         Controls.Add(rawInputLabel);
@@ -213,6 +220,97 @@ public class MainForm : Form
         return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : null;
     }
 
+    private void AdminButton_Click(object? sender, EventArgs e)
+    {
+        if (!ShowAdminLoginDialog())
+        {
+            return;
+        }
+
+        using var keyForm = new Form
+        {
+            Width = 420,
+            Height = 200,
+            Text = "ESP Startup Key",
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            StartPosition = FormStartPosition.CenterParent,
+            MaximizeBox = false,
+            MinimizeBox = false
+        };
+
+        var keyLabel = new Label { Text = "ESP startup key:", Left = 20, Top = 20, AutoSize = true };
+        var keyText = new TextBox { Left = 120, Top = 18, Width = 250, Text = espStartupKey };
+
+        var okButton = new Button { Text = "Save", Left = 120, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+        var cancelButton = new Button { Text = "Cancel", Left = 230, Width = 100, Top = 70, DialogResult = DialogResult.Cancel };
+
+        keyForm.Controls.Add(keyLabel);
+        keyForm.Controls.Add(keyText);
+        keyForm.Controls.Add(okButton);
+        keyForm.Controls.Add(cancelButton);
+        keyForm.AcceptButton = okButton;
+        keyForm.CancelButton = cancelButton;
+
+        if (keyForm.ShowDialog() == DialogResult.OK)
+        {
+            if (string.IsNullOrWhiteSpace(keyText.Text))
+            {
+                MessageBox.Show("ESP startup key cannot be empty.", "Invalid key", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            espStartupKey = keyText.Text.Trim();
+            UpdateStatus("ESP startup key updated.", Color.LightGreen);
+        }
+    }
+
+    private bool ShowAdminLoginDialog()
+    {
+        using var loginForm = new Form
+        {
+            Width = 420,
+            Height = 180,
+            Text = "Admin Login",
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            StartPosition = FormStartPosition.CenterParent,
+            MaximizeBox = false,
+            MinimizeBox = false
+        };
+
+        var userLabel = new Label { Text = "User ID:", Left = 20, Top = 20, AutoSize = true };
+        var userText = new TextBox { Left = 120, Top = 18, Width = 250 };
+
+        var passwordLabel = new Label { Text = "Password:", Left = 20, Top = 60, AutoSize = true };
+        var passwordText = new TextBox { Left = 120, Top = 58, Width = 250, UseSystemPasswordChar = true };
+
+        var okButton = new Button { Text = "Login", Left = 120, Width = 100, Top = 100, DialogResult = DialogResult.OK };
+        var cancelButton = new Button { Text = "Cancel", Left = 230, Width = 100, Top = 100, DialogResult = DialogResult.Cancel };
+
+        loginForm.Controls.Add(userLabel);
+        loginForm.Controls.Add(userText);
+        loginForm.Controls.Add(passwordLabel);
+        loginForm.Controls.Add(passwordText);
+        loginForm.Controls.Add(okButton);
+        loginForm.Controls.Add(cancelButton);
+        loginForm.AcceptButton = okButton;
+        loginForm.CancelButton = cancelButton;
+
+        while (loginForm.ShowDialog() == DialogResult.OK)
+        {
+            if (userText.Text == AdminUserId && passwordText.Text == AdminPassword)
+            {
+                return true;
+            }
+
+            MessageBox.Show("Invalid admin credentials.", "Access denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            userText.Clear();
+            passwordText.Clear();
+            userText.Focus();
+        }
+
+        return false;
+    }
+
     private bool TryConnectToEspPort(string portName)
     {
         var candidate = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One)
@@ -236,7 +334,7 @@ public class MainForm : Form
                         foreach (var line in lines)
                         {
                             var trimmed = line.Trim();
-                            if (trimmed == EspStartupKey)
+                            if (trimmed == espStartupKey)
                             {
                                 candidate.DataReceived += SerialPort_DataReceived;
                                 serialPort = candidate;
@@ -307,7 +405,7 @@ public class MainForm : Form
         try
         {
             string? line = serialPort.ReadLine()?.Trim();
-            if (!string.IsNullOrEmpty(line) && line != EspStartupKey)
+            if (!string.IsNullOrEmpty(line) && line != espStartupKey)
             {
                 BeginInvoke(() => UpdateValuesFromSerial(line));
             }
@@ -322,11 +420,11 @@ public class MainForm : Form
     {
         rawInputLabel.Text = $"Raw serial: {data}";
 
-        var matches = Regex.Matches(data, @"[+-]?\d+(\.\d+)?");
+        var matches = Regex.Matches(data, @"\b\d{3}\b");
         if (matches.Count == 0)
         {
             parsedLabel.Text = "Parsed values: none";
-            UpdateStatus("No numeric value found in serial input.", Color.Orange);
+            UpdateStatus("No 3-digit score value found in serial input.", Color.Orange);
             return;
         }
 
@@ -336,9 +434,9 @@ public class MainForm : Form
 
         parsedLabel.Text = $"Parsed values: {string.Join(", ", values)}";
 
-        // Automatically set the first numeric raw value into the manual entry field.
+        // Automatically set the first valid 3-digit score value into the manual entry field.
         ProcessEnteredNumber(values[0]);
-        UpdateStatus("Serial data received and entered to manual value.", Color.LightGreen);
+        UpdateStatus("Serial 3-digit score received and entered.", Color.LightGreen);
     }
 
     private static decimal ClampValue(decimal value) => Math.Min(999, Math.Max(0, value));
