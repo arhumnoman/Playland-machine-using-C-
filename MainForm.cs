@@ -21,6 +21,7 @@ public class MainForm : Form
     private readonly Button enterNumberButton;
     private readonly Button connectButton;
     private readonly Label statusLabel;
+    private const string EspStartupKey = "123456789";
     private string? detectedPortName;
     private readonly Label resultLabel;
     private readonly Label rawInputLabel;
@@ -123,9 +124,9 @@ public class MainForm : Form
         }
 
         connectButton.Enabled = false;
-        UpdateStatus("Scanning COM ports...", Color.Black);
+        UpdateStatus("Scanning COM ports for ESP startup key...", Color.Black);
 
-        var portNames = SerialPort.GetPortNames();
+        var portNames = SerialPort.GetPortNames().Distinct().OrderBy(n => n).ToArray();
         if (portNames.Length == 0)
         {
             UpdateStatus("No COM ports found.", Color.Orange);
@@ -146,7 +147,7 @@ public class MainForm : Form
             }
         }
 
-        UpdateStatus("Could not auto-detect an ESP connection on any COM port.", Color.Red);
+        UpdateStatus("Wrong ESP. No port sent the expected startup key.", Color.Red);
         connectButton.Enabled = true;
     }
 
@@ -224,7 +225,7 @@ public class MainForm : Form
         {
             candidate.Open();
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            while (sw.ElapsedMilliseconds < 4500)
+            while (sw.ElapsedMilliseconds < 6000)
             {
                 if (candidate.BytesToRead > 0)
                 {
@@ -235,7 +236,7 @@ public class MainForm : Form
                         foreach (var line in lines)
                         {
                             var trimmed = line.Trim();
-                            if (Regex.IsMatch(trimmed, "^\\d{3}$"))
+                            if (trimmed == EspStartupKey)
                             {
                                 candidate.DataReceived += SerialPort_DataReceived;
                                 serialPort = candidate;
@@ -306,7 +307,7 @@ public class MainForm : Form
         try
         {
             string? line = serialPort.ReadLine()?.Trim();
-            if (!string.IsNullOrEmpty(line))
+            if (!string.IsNullOrEmpty(line) && line != EspStartupKey)
             {
                 BeginInvoke(() => UpdateValuesFromSerial(line));
             }
