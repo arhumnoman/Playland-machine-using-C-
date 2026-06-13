@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PlaylandBoxer;
@@ -18,10 +19,9 @@ public class MainForm : Form
     private readonly Label box3Label;
     private readonly Label manualLabel;
     private readonly Button enterNumberButton;
-    private readonly ComboBox portComboBox;
-    private readonly Button refreshPortsButton;
     private readonly Button connectButton;
     private readonly Label statusLabel;
+    private string? detectedPortName;
     private readonly Label resultLabel;
     private readonly Label rawInputLabel;
     private readonly Label parsedLabel;
@@ -59,11 +59,7 @@ public class MainForm : Form
         enterNumberButton = new Button { Text = "Enter Number", Location = new Point(40, 340), Width = 180 };
         enterNumberButton.Click += EnterNumberButton_Click;
 
-        portComboBox = new ComboBox { Location = new Point(40, 420), Width = 260, DropDownStyle = ComboBoxStyle.DropDownList };
-        refreshPortsButton = new Button { Text = "Refresh COM Ports", Location = new Point(320, 420), Width = 200 };
-        refreshPortsButton.Click += RefreshPortsButton_Click;
-
-        connectButton = new Button { Text = "Connect", Location = new Point(540, 420), Width = 160 };
+        connectButton = new Button { Text = "Auto Connect", Location = new Point(40, 420), Width = 160 };
         connectButton.Click += ConnectButton_Click;
 
         statusLabel = new Label
@@ -111,30 +107,47 @@ public class MainForm : Form
         Controls.Add(manualLabel);
         Controls.Add(manualInput);
         Controls.Add(enterNumberButton);
-        Controls.Add(portComboBox);
-        Controls.Add(refreshPortsButton);
         Controls.Add(connectButton);
         Controls.Add(statusLabel);
         Controls.Add(resultLabel);
         Controls.Add(rawInputLabel);
         Controls.Add(parsedLabel);
-
-        LoadAvailablePorts();
     }
 
-    private void LoadAvailablePorts()
+    private async void ConnectButton_Click(object? sender, EventArgs e)
     {
-        portComboBox.Items.Clear();
-        portComboBox.Items.AddRange(SerialPort.GetPortNames());
-        if (portComboBox.Items.Count > 0)
+        if (serialPort != null && serialPort.IsOpen)
         {
-            portComboBox.SelectedIndex = 0;
+            DisconnectSerialPort();
+            return;
         }
-    }
 
-    private void RefreshPortsButton_Click(object? sender, EventArgs e)
-    {
-        LoadAvailablePorts();
+        connectButton.Enabled = false;
+        UpdateStatus("Scanning COM ports...", Color.Black);
+
+        var portNames = SerialPort.GetPortNames();
+        if (portNames.Length == 0)
+        {
+            UpdateStatus("No COM ports found.", Color.Orange);
+            connectButton.Enabled = true;
+            return;
+        }
+
+        foreach (var portName in portNames)
+        {
+            UpdateStatus($"Testing {portName}...", Color.Black);
+            if (await Task.Run(() => TryConnectToEspPort(portName)))
+            {
+                detectedPortName = portName;
+                connectButton.Text = "Disconnect";
+                UpdateStatus($"Connected to ESP on {portName}.", Color.LightGreen);
+                connectButton.Enabled = true;
+                return;
+            }
+        }
+
+        UpdateStatus("Could not auto-detect an ESP connection on any COM port.", Color.Red);
+        connectButton.Enabled = true;
     }
 
     private void EnterNumberButton_Click(object? sender, EventArgs e)
@@ -199,37 +212,67 @@ public class MainForm : Form
         return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : null;
     }
 
-    private void ConnectButton_Click(object? sender, EventArgs e)
+    private bool TryConnectToEspPort(string portName)
     {
-        if (serialPort != null && serialPort.IsOpen)
+        var candidate = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One)
         {
-            DisconnectSerialPort();
-            return;
-        }
+            NewLine = "\n",
+            ReadTimeout = 500
+        };
 
-        if (portComboBox.SelectedItem is not string portName)
+        try
         {
-            UpdateStatus("No COM port selected.", Color.Orange);
-            return;
+            candidate.Open();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            while (sw.ElapsedMilliseconds < 4500)
+            {
+                if (candidate.BytesToRead > 0)
+                {
+                    var data = candidate.ReadExisting();
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        var lines = data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var line in lines)
+                        {
+                            var trimmed = line.Trim();
+                            if (Regex.IsMatch(trimmed, "^\\d{3}$"))
+                            {
+                                candidate.DataReceived += SerialPort_DataReceived;
+                                serialPort = candidate;
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                System.Threading.Thread.Sleep(100);
+            }
+        }
+        catch
+        {
+            // ignore invalid or unreachable port
         }
 
         try
         {
-            serialPort = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One)
+            if (candidate.IsOpen)
             {
-                NewLine = "\n",
-                ReadTimeout = 500
-            };
-            serialPort.DataReceived += SerialPort_DataReceived;
-            serialPort.Open();
-            connectButton.Text = "Disconnect";
-            UpdateStatus($"Connected to {portName}", Color.LightGreen);
+                candidate.Close();
+            }
         }
-        catch (Exception ex)
+        catch
         {
-            UpdateStatus($"Connection failed: {ex.Message}", Color.Red);
-            serialPort = null;
+            // ignore cleanup exceptions
         }
+        finally
+        {
+            if (serialPort != candidate)
+            {
+                candidate.Dispose();
+            }
+        }
+
+        return false;
     }
 
     private void DisconnectSerialPort()

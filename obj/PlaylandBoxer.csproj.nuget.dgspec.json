@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {}
+    "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {}
   },
   "projects": {
-    "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {
+    "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+        "projectUniqueName": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
         "projectName": "PlaylandBoxer",
-        "projectPath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+        "projectPath": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
         "packagesPath": "C:\\Users\\arhum\\.nuget\\packages\\",
-        "outputPath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\obj\\",
+        "outputPath": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\arhum\\AppData\\Roaming\\NuGet\\NuGet.Config"
