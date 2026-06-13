@@ -12,3 +12,18 @@ C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\o
 C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.pdb
 C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.genruntimeconfig.cache
 C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\ref\PlaylandBoxer.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\PlaylandBoxer.exe
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\PlaylandBoxer.deps.json
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\PlaylandBoxer.runtimeconfig.json
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\PlaylandBoxer.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\PlaylandBoxer.pdb
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.GeneratedMSBuildEditorConfig.editorconfig
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.AssemblyInfoInputs.cache
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.AssemblyInfo.cs
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.csproj.CoreCompileInputs.cache
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.sourcelink.json
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\refint\PlaylandBoxer.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.pdb
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.genruntimeconfig.cache
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\ref\PlaylandBoxer.dll

@@ -17,7 +17,8 @@ public class MainForm : Form
     public MainForm()
     {
         Text = "Playland Boxer";
-        ClientSize = new Size(320, 220);
+        FormBorderStyle = FormBorderStyle.None;
+        WindowState = FormWindowState.Maximized;
         StartPosition = FormStartPosition.CenterScreen;
 
         box1Label = new Label { Text = "Box 1:", Location = new Point(20, 20), AutoSize = true };
