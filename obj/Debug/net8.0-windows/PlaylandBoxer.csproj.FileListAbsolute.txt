@@ -1,0 +1,14 @@
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\bin\Debug\net8.0-windows\PlaylandBoxer.exe
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\bin\Debug\net8.0-windows\PlaylandBoxer.deps.json
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\bin\Debug\net8.0-windows\PlaylandBoxer.runtimeconfig.json
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\bin\Debug\net8.0-windows\PlaylandBoxer.dll
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\bin\Debug\net8.0-windows\PlaylandBoxer.pdb
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.AssemblyInfoInputs.cache
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.AssemblyInfo.cs
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.csproj.CoreCompileInputs.cache
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.dll
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\refint\PlaylandBoxer.dll
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.pdb
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\PlaylandBoxer.genruntimeconfig.cache
+C:\Users\arhum\Downloads\sokoban-solver-main\sokoban-solver-main\PlaylandBoxer\obj\Debug\net8.0-windows\ref\PlaylandBoxer.dll
