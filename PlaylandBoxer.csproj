@@ -9,5 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2357.28" />
   </ItemGroup>
 </Project>

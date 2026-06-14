@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "aCEMh50pDfc=",
+  "dgSpecHash": "0nMdatErPL8=",
   "success": true,
-  "projectFilePath": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+  "projectFilePath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\arhum\\.nuget\\packages\\microsoft.web.webview2\\1.0.2365.46\\microsoft.web.webview2.1.0.2365.46.nupkg.sha512",
     "C:\\Users\\arhum\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\8.0.0\\runtime.linux-arm.runtime.native.system.io.ports.8.0.0.nupkg.sha512",
     "C:\\Users\\arhum\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\8.0.0\\runtime.linux-arm64.runtime.native.system.io.ports.8.0.0.nupkg.sha512",
     "C:\\Users\\arhum\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\8.0.0\\runtime.linux-x64.runtime.native.system.io.ports.8.0.0.nupkg.sha512",
@@ -16,5 +17,18 @@
     "C:\\Users\\arhum\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.28\\microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512",
     "C:\\Users\\arhum\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.28\\microsoft.netcore.app.host.win-x64.8.0.28.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "PlaylandBoxer depends on Microsoft.Web.WebView2 (>= 1.0.2357.28) but Microsoft.Web.WebView2 1.0.2357.28 was not found. Microsoft.Web.WebView2 1.0.2365.46 was resolved instead.",
+      "projectPath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+      "warningLevel": 1,
+      "filePath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+      "libraryId": "Microsoft.Web.WebView2",
+      "targetGraphs": [
+        "net8.0-windows"
+      ]
+    }
+  ]
 }

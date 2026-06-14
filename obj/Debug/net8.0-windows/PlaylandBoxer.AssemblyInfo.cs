@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PlaylandBoxer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50eca3e8dd10c3a5096d5b763d9f8603140c63bb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6236ab674f9a506f4d4d0431fd687f8b9422e3bb")]
 [assembly: System.Reflection.AssemblyProductAttribute("PlaylandBoxer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PlaylandBoxer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

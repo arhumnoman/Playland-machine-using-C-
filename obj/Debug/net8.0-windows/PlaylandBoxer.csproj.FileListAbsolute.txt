@@ -37,3 +37,9 @@ E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windo
 E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.IO.Ports.dll
 E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\PlaylandBoxer.csproj.AssemblyReference.cache
 E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\obj\Debug\net8.0-windows\Playland.FAEE1AC4.Up2Date
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\runtimes\win-x86\native\WebView2Loader.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\runtimes\win-x64\native\WebView2Loader.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\runtimes\win-arm64\native\WebView2Loader.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\Microsoft.Web.WebView2.Core.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\Microsoft.Web.WebView2.WinForms.dll
+E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\bin\Debug\net8.0-windows\Microsoft.Web.WebView2.Wpf.dll

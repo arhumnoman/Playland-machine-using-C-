@@ -1,10 +1,13 @@
 using System;
 using System.Drawing;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using Microsoft.Web.WebView2.WinForms;
 
 namespace PlaylandBoxer;
 
@@ -30,6 +33,9 @@ public class MainForm : Form
     private readonly Label rawInputLabel;
     private readonly Label parsedLabel;
     private SerialPort? serialPort;
+    private WebView2? webView;
+    private Panel? webViewPanel;
+    private Label? errorLabel;
 
     public MainForm()
     {
@@ -37,7 +43,13 @@ public class MainForm : Form
         FormBorderStyle = FormBorderStyle.None;
         WindowState = FormWindowState.Maximized;
         StartPosition = FormStartPosition.CenterScreen;
-        BackColor = Color.White;
+        BackColor = Color.Black;
+
+        // Initialize video player
+        InitializeVideoPlayer();
+
+        // Handle the Shown event to complete video setup
+        this.Shown += MainForm_Shown;
 
         var headerLabel = new Label
         {
@@ -48,16 +60,17 @@ public class MainForm : Form
             Location = new Point(20, 20)
         };
 
-        box1Label = new Label { Text = "Highest score:", Location = new Point(40, 100), AutoSize = true, ForeColor = Color.Black };
+        // Use solid backgrounds for controls that don't support transparent colors
+        box1Label = new Label { Text = "Highest score:", Location = new Point(40, 100), AutoSize = true, ForeColor = Color.Black, BackColor = Color.White };
         box1Input = new NumericUpDown { Location = new Point(180, 98), Width = 220, Minimum = 0, Maximum = 999, Value = 0, ReadOnly = true, TabStop = false, BackColor = Color.White, ForeColor = Color.Black };
 
-        box2Label = new Label { Text = "2nd high score:", Location = new Point(40, 160), AutoSize = true, ForeColor = Color.Black };
+        box2Label = new Label { Text = "2nd high score:", Location = new Point(40, 160), AutoSize = true, ForeColor = Color.Black, BackColor = Color.White };
         box2Input = new NumericUpDown { Location = new Point(180, 158), Width = 220, Minimum = 0, Maximum = 999, Value = 0, ReadOnly = true, TabStop = false, BackColor = Color.White, ForeColor = Color.Black };
 
-        box3Label = new Label { Text = "3rd high score:", Location = new Point(40, 220), AutoSize = true, ForeColor = Color.Black };
+        box3Label = new Label { Text = "3rd high score:", Location = new Point(40, 220), AutoSize = true, ForeColor = Color.Black, BackColor = Color.White };
         box3Input = new NumericUpDown { Location = new Point(180, 218), Width = 220, Minimum = 0, Maximum = 999, Value = 0, ReadOnly = true, TabStop = false, BackColor = Color.White, ForeColor = Color.Black };
 
-        manualLabel = new Label { Text = "Manual Test Value:", Location = new Point(40, 280), AutoSize = true, ForeColor = Color.Black };
+        manualLabel = new Label { Text = "Manual Test Value:", Location = new Point(40, 280), AutoSize = true, ForeColor = Color.Black, BackColor = Color.White };
         manualInput = new NumericUpDown { Location = new Point(260, 278), Width = 140, Minimum = 0, Maximum = 999, Value = 0, BackColor = Color.White, ForeColor = Color.Black };
 
         enterNumberButton = new Button { Text = "Enter Number", Location = new Point(40, 340), Width = 180 };
@@ -120,6 +133,290 @@ public class MainForm : Form
         Controls.Add(resultLabel);
         Controls.Add(rawInputLabel);
         Controls.Add(parsedLabel);
+
+        // Make text white and hide numeric boxes (remove visible "boxes")
+        headerLabel.ForeColor = Color.White;
+
+        box1Label.ForeColor = Color.White;
+        box1Label.BackColor = Color.Transparent;
+        box1Input.Visible = false;
+
+        box2Label.ForeColor = Color.White;
+        box2Label.BackColor = Color.Transparent;
+        box2Input.Visible = false;
+
+        box3Label.ForeColor = Color.White;
+        box3Label.BackColor = Color.Transparent;
+        box3Input.Visible = false;
+
+        manualLabel.ForeColor = Color.White;
+        manualLabel.BackColor = Color.Transparent;
+        manualInput.Visible = false;
+
+        statusLabel.ForeColor = Color.White;
+        resultLabel.ForeColor = Color.White;
+        rawInputLabel.ForeColor = Color.White;
+        parsedLabel.ForeColor = Color.White;
+
+        enterNumberButton.ForeColor = Color.White;
+        connectButton.ForeColor = Color.White;
+        adminButton.ForeColor = Color.White;
+
+        // Bring all UI controls to front so they appear above the video background
+        BringToFront();
+        headerLabel.BringToFront();
+        box1Label.BringToFront();
+        box1Input.BringToFront();
+        box2Label.BringToFront();
+        box2Input.BringToFront();
+        box3Label.BringToFront();
+        box3Input.BringToFront();
+        manualLabel.BringToFront();
+        manualInput.BringToFront();
+        enterNumberButton.BringToFront();
+        connectButton.BringToFront();
+        adminButton.BringToFront();
+        statusLabel.BringToFront();
+        resultLabel.BringToFront();
+        rawInputLabel.BringToFront();
+        parsedLabel.BringToFront();
+    }
+
+    private void ShowError(string message)
+    {
+        if (errorLabel == null)
+        {
+            errorLabel = new Label
+            {
+                Text = message,
+                ForeColor = Color.Blue,
+                Font = new Font(Font.FontFamily, 16, FontStyle.Bold),
+                AutoSize = true,
+                Location = new Point(40, 640),
+                BackColor = Color.Transparent
+            };
+            Controls.Add(errorLabel);
+            errorLabel.BringToFront();
+        }
+        else
+        {
+            errorLabel.Text = message;
+            errorLabel.Visible = true;
+            errorLabel.BringToFront();
+        }
+
+        Console.WriteLine($"Error shown: {message}");
+    }
+
+    private void InitializeVideoPlayer()
+    {
+        try
+        {
+            // Create a panel for the webview
+            webViewPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.Black,
+                Name = "webViewPanel"
+            };
+            Controls.Add(webViewPanel);
+            webViewPanel.SendToBack();
+
+            // Initialize WebView2
+            webView = new WebView2
+            {
+                Dock = DockStyle.Fill,
+                Name = "webView"
+            };
+            webViewPanel.Controls.Add(webView);
+
+            // Initialize WebView2 asynchronously
+            var initTask = webView.EnsureCoreWebView2Async();
+            initTask.ContinueWith(async _ =>
+            {
+                try
+                {
+                    // Wait a moment for the core to fully initialize
+                    await Task.Delay(500);
+                    
+                    if (webView?.CoreWebView2 != null)
+                    {
+                        // Allow access to local files
+                        webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+                        webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                        
+                        Debug.WriteLine("WebView2 CoreWebView2 initialized successfully");
+                        LoadVideoIntoWebView();
+                    }
+                    else
+                    {
+                        Debug.WriteLine("WebView2 CoreWebView2 is still null after EnsureCoreWebView2Async");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error in async initialization: {ex.Message}");
+                    Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Video player initialization failed: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
+    }
+
+    private void LoadVideoIntoWebView()
+    {
+        try
+        {
+            Console.WriteLine("LoadVideoIntoWebView called");
+
+                // Find the video folder - it should be in the project root, not in bin
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                Console.WriteLine($"Base directory: {baseDir}");
+
+                // Try multiple possible locations for the video folder
+                string[] possiblePaths = new string[]
+                {
+                    Path.Combine(baseDir, "video"), // If running from bin/Debug/net8.0-windows
+                    Path.Combine(baseDir, "..", "..", "..", "video"), // Navigate up from bin/Debug/net8.0-windows to project root
+                    Path.Combine(baseDir, "..\\..\\..\\video"), // Windows path separator
+                    @"e:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\video" // Absolute path
+                };
+
+                string? videoFolder = null;
+                foreach (var path in possiblePaths)
+                {
+                    string fullPath = Path.GetFullPath(path);
+                    Console.WriteLine($"Checking: {fullPath}");
+                    if (Directory.Exists(fullPath))
+                    {
+                        videoFolder = fullPath;
+                        Console.WriteLine($"Found video folder at: {videoFolder}");
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(videoFolder))
+                {
+                    string errMsg = "Error: Video folder not found in any expected location";
+                    Console.WriteLine(errMsg);
+                    ShowError(errMsg);
+                    return;
+                }
+
+                string videoFilePath = Path.Combine(videoFolder, "1.mp4");
+                Console.WriteLine($"Looking for video at: {videoFilePath}");
+
+                if (!File.Exists(videoFilePath))
+                {
+                    string errMsg = "Error: Video file not found at " + videoFilePath;
+                    Console.WriteLine(errMsg);
+                    ShowError(errMsg);
+                    return;
+                }
+
+                Console.WriteLine($"Found video file: {videoFilePath}");
+
+            // Create an HTML file to serve the video
+                string htmlFilePath = Path.Combine(videoFolder, "player.html");
+            Console.WriteLine($"Creating HTML file at: {htmlFilePath}");
+
+                // Create simple HTML content
+                string htmlContent = @"<!DOCTYPE html
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 0; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop>
+        <source src=""1.mp4"" type=""video/mp4"">
+    </video>
+</body>
+</html>";
+
+            // Write the HTML file
+            File.WriteAllText(htmlFilePath, htmlContent);
+            Console.WriteLine("HTML file created");
+
+            // Navigate to the HTML file
+            if (webView?.CoreWebView2 != null)
+            {
+                string fileUrl = new Uri(htmlFilePath).AbsoluteUri;
+                Console.WriteLine($"Navigating to: {fileUrl}");
+                webView.CoreWebView2.Navigate(fileUrl);
+                Console.WriteLine("Navigation complete");
+            }
+            else
+            {
+                string errMsg = "Error: WebView2 not initialized";
+                Console.WriteLine(errMsg);
+                ShowError(errMsg);
+            }
+        }
+        catch (Exception ex)
+        {
+            string errMsg = $"Error: Video playback failed - {ex.Message}";
+            Console.WriteLine(errMsg);
+            Console.WriteLine($"Stack: {ex.StackTrace}");
+            ShowError(errMsg);
+        }
+    }
+
+    private void StartVideoPlayer(string videoFile)
+    {
+        // This method is no longer used - video is handled by WebView2
+    }
+
+    private string? FindExecutable(string exeName)
+    {
+        // This method is no longer used - video is handled by WebView2
+        return null;
+    }
+
+    private async void MainForm_Shown(object? sender, EventArgs e)
+    {
+        try
+        {
+            Console.WriteLine("MainForm_Shown called");
+
+            if (webView == null)
+            {
+                Console.WriteLine("webView is null");
+                ShowError("Error: WebView initialization failed");
+                return;
+            }
+
+            Console.WriteLine("Calling EnsureCoreWebView2Async");
+            await webView.EnsureCoreWebView2Async();
+            
+            Console.WriteLine("Waiting 1 second...");
+            await Task.Delay(1000);
+
+            if (webView.CoreWebView2 != null)
+            {
+                Console.WriteLine("CoreWebView2 is ready");
+                webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+                webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                LoadVideoIntoWebView();
+            }
+            else
+            {
+                Console.WriteLine("CoreWebView2 is still null");
+                ShowError("Error: WebView2 engine not available");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in MainForm_Shown: {ex.Message}");
+            Console.WriteLine($"Stack: {ex.StackTrace}");
+            ShowError($"Error: {ex.Message}");
+        }
     }
 
     private async void ConnectButton_Click(object? sender, EventArgs e)
@@ -464,6 +761,28 @@ public class MainForm : Form
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         DisconnectSerialPort();
+        
+        // Stop and dispose WebView2
+        if (webView != null)
+        {
+            try
+            {
+                webView.Dispose();
+            }
+            catch { }
+            webView = null;
+        }
+        
+        if (webViewPanel != null)
+        {
+            try
+            {
+                webViewPanel.Dispose();
+            }
+            catch { }
+            webViewPanel = null;
+        }
+        
         base.OnFormClosing(e);
     }
 }

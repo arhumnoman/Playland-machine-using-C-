@@ -1,0 +1,10 @@
+15/06/2026 12:51:09 am - Startup exception: Control does not support transparent background colors.
+   at System.Windows.Forms.Control.set_BackColor(Color value)
+   at System.Windows.Forms.UpDownBase.set_BackColor(Color value)
+   at PlaylandBoxer.MainForm..ctor() in E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\MainForm.cs:line 64
+   at PlaylandBoxer.Program.Main() in E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\Program.cs:line 40
+15/06/2026 12:51:09 am - UnhandledException: Control does not support transparent background colors.
+   at System.Windows.Forms.Control.set_BackColor(Color value)
+   at System.Windows.Forms.UpDownBase.set_BackColor(Color value)
+   at PlaylandBoxer.MainForm..ctor() in E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\MainForm.cs:line 64
+   at PlaylandBoxer.Program.Main() in E:\GIT HUB Projects\Playland P1\Playland-machine-using-C-\Program.cs:line 40

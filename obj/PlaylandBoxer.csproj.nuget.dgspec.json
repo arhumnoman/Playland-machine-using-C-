@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {}
+    "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {}
   },
   "projects": {
-    "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {
+    "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+        "projectUniqueName": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
         "projectName": "PlaylandBoxer",
-        "projectPath": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
+        "projectPath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\PlaylandBoxer.csproj",
         "packagesPath": "C:\\Users\\arhum\\.nuget\\packages\\",
-        "outputPath": "e:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\obj\\",
+        "outputPath": "E:\\GIT HUB Projects\\Playland P1\\Playland-machine-using-C-\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\arhum\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -46,6 +46,10 @@
           "framework": "net8.0-windows7.0",
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "Microsoft.Web.WebView2": {
+              "target": "Package",
+              "version": "[1.0.2357.28, )"
+            },
             "System.IO.Ports": {
               "target": "Package",
               "version": "[8.0.0, )"
